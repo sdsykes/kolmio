@@ -17,6 +17,7 @@ h1 {
   letter-spacing: .015em;
   color: white;
   float: left;
+  margin-left: 5px;
 }
 
 #right-matter {
@@ -50,6 +51,10 @@ h2 {
   background-color: #707070;
 }
 
+.button:hover {
+  background-color: #a0a0a0;  
+}
+
 .clear {clear: both;}
 
 #content {
@@ -62,7 +67,7 @@ h2 {
   height: 173px;
 }
 
-#content div {
+#content div, #content .result img {
   position: absolute;
   transition: 0.3s ease-in-out;
   transform-origin: 50% 65%;
@@ -75,11 +80,18 @@ h2 {
   border-radius: 10px;  
 }
 
-.result img {
+.thumb_img {
   margin-top: 15px;
   margin-left: 10px;
   width: 80px;
   height: 69px;
+}
+
+.big_img {
+  margin-top: 60px;
+  margin-left: 40px;
+  width: 320px;
+  height: 276px;  
 }
 
 #res1 {

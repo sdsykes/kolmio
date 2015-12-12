@@ -10,7 +10,7 @@
     <h1>MEGAKOLMIO</h1>
     <div id="right-matter">
       <h2>Stephen Sykes December 2015</h2>
-      <p><span class="button"><a href="">RESET</a></span></p>
+      <p><span class="button"><a href="javascript:reset()">RESET</a></span></p>
     </div>
     <div class="clear"></div>
     <div id="content">
@@ -34,31 +34,73 @@
 </body>
 
 <script>
-var xhr = new XMLHttpRequest();
-xhr.open('GET', "/steps.json");
-xhr.responseType = 'json';
-xhr.onload = function() {
-  var steps = xhr.response;
-  animate_steps(steps);
-};
-xhr.onerror = function() {
-  console.log("Error");
-};
-xhr.send();
 
 var result_count = 0;
+var was_reset = false;
+var finished = false;
+var steps = [];
+var pieces = [];
 
-function animate_steps(steps) {
-  var i;
-  var pieces = []
+function fetch_steps() {
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', "/steps.json");
+  xhr.responseType = 'json';
+  xhr.onload = function() {
+    steps = xhr.response;
+    animate_steps(steps);
+  };
+  xhr.onerror = function() {
+    console.log("Error");
+  };
+  xhr.send();
+}
+
+function setup() {
+  for (i = 0; i < 6; ++i) {
+    var result_div = document.getElementById("res" + (i + 1));
+    result_div.addEventListener('mouseover', result_hover_in, false );
+    result_div.addEventListener('mouseout', result_hover_out, false );
+  }
+  
   for (i = 1; i <= 9; ++i) {
     pieces[i - 1] = document.getElementById("t" + i);
   }
-  do_step(steps, pieces, 0)
 }
 
-function do_step(steps, pieces, n) {
-  if (n >= steps.length) return;
+function result_hover_in() {
+  var elements = this.getElementsByTagName('img');
+  if (elements.length > 0) {
+    this.style.width = "400px";
+    this.style.height = "400px";
+    this.old_left = this.style.left;
+    if (this.id == "res4" || this.id == "res5" || this.id == "res6") this.style.left = "670px";
+    this.style.zIndex = 20;
+    elements[0].classList.remove("thumb_img");
+    elements[0].classList.add("big_img");
+  }
+}
+
+function result_hover_out() {
+  var elements = this.getElementsByTagName('img');
+  if (elements.length > 0) {
+    this.style.width = "100px";
+    this.style.height = "100px";
+    this.style.left = this.old_left;
+    this.style.zIndex = 0;
+    console.log(elements[0].classList);
+    elements[0].classList.remove("big_img");
+    elements[0].classList.add("thumb_img");
+  }
+}
+
+function animate_steps() {
+  var i;
+  do_step(0)
+}
+
+function do_step(n) {
+  if (was_reset) {reset_and_restart(); return;}
+  if (n >= steps.length) {finished = true; return;}
   step = steps[n];
   var i;
   var unused = [1,2,3,4,5,6,7,8,9]
@@ -95,15 +137,44 @@ function do_step(steps, pieces, n) {
     result_div.style.background = "white";
     var elem = document.createElement("img");
     elem.setAttribute("src", "result_" + result_count + ".png");
+    elem.classList.add("thumb_img");
     setTimeout(function(){result_div.appendChild(elem);}, 300);
     pause = 2500;
+    setTimeout(function(){send_pieces_home();}, 2100);
   }
   
-  setTimeout(function(){do_step(steps, pieces, n + 1);}, pause);
+  setTimeout(function(){do_step(n + 1);}, pause);
 }
 
-imgLink.addEventListener('mouseover', Controls.mouseOverListener, false );
-imgLink.addEventListener('mouseout', Controls.mouseOutListener, false );
+function reset() {
+  if (finished) reset_and_restart()
+  else was_reset = true;
+}
+
+function send_pieces_home() {
+  for (i = 0; i < 9; ++i) {
+    var piece = pieces[i];
+    piece.className = "";
+    piece.classList.add("home" + (i + 1));
+  }
+}
+
+function reset_and_restart() {
+  send_pieces_home();
+  result_count = 0;
+  for (i = 0; i < 6; ++i) {
+    var result_div = document.getElementById("res" + (i + 1));
+    result_div.style.background = "#707070";
+    var elements = result_div.getElementsByTagName('img');
+    if (elements.length > 0) result_div.removeChild(elements[0]);
+  }
+
+  was_reset = false;
+  setTimeout(function(){do_step(0);}, 2000);
+}
+
+setup();
+fetch_steps();
 
 </script>
 
