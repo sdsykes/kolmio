@@ -2,8 +2,6 @@
 
 ## Stephen Sykes
 
-### MEGAKOLMIO solver
-
 This solver is written in Ruby.
 
 It has output in the competition specified format, and optionally generates png images
