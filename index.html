@@ -20,15 +20,15 @@
       <div id="res4" class="result"></div>
       <div id="res5" class="result"></div>
       <div id="res6" class="result"></div>
-      <div id="t1" class="home1"><img src="P1_0.png" class="kol"></div>
-      <div id="t2" class="home2"><img src="P2_0.png" class="kol"></div>
-      <div id="t3" class="home3"><img src="P3_0.png" class="kol"></div>
-      <div id="t4" class="home4"><img src="P4_0.png" class="kol"></div>
-      <div id="t5" class="home5"><img src="P5_0.png" class="kol"></div>
-      <div id="t6" class="home6"><img src="P6_0.png" class="kol"></div>
-      <div id="t7" class="home7"><img src="P7_0.png" class="kol"></div>
-      <div id="t8" class="home8"><img src="P8_0.png" class="kol"></div>
-      <div id="t9" class="home9"><img src="P9_0.png" class="kol"></div>
+      <div id="t1" class="home1"><img src="images/P1_0.png" class="kol"></div>
+      <div id="t2" class="home2"><img src="images/P2_0.png" class="kol"></div>
+      <div id="t3" class="home3"><img src="images/P3_0.png" class="kol"></div>
+      <div id="t4" class="home4"><img src="images/P4_0.png" class="kol"></div>
+      <div id="t5" class="home5"><img src="images/P5_0.png" class="kol"></div>
+      <div id="t6" class="home6"><img src="images/P6_0.png" class="kol"></div>
+      <div id="t7" class="home7"><img src="images/P7_0.png" class="kol"></div>
+      <div id="t8" class="home8"><img src="images/P8_0.png" class="kol"></div>
+      <div id="t9" class="home9"><img src="images/P9_0.png" class="kol"></div>
     </div>
   </div>
 </body>
@@ -136,7 +136,7 @@ function do_step(n) {
     var result_div = document.getElementById("res" + result_count);
     result_div.style.background = "white";
     var elem = document.createElement("img");
-    elem.setAttribute("src", "result_" + result_count + ".png");
+    elem.setAttribute("src", "images/result_" + result_count + ".png");
     elem.classList.add("thumb_img");
     setTimeout(function(){result_div.appendChild(elem);}, 300);
     pause = 2500;

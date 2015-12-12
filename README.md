@@ -42,3 +42,9 @@ how this algorithm works.
 As an optimisation, certain triangle piece / orientation combinations are discarded before placing them
 because we know through counting the number of matching pictures that only certain pictures can appear
 on the outside edge of the megakolmio.
+
+### Speed
+
+Even though Ruby is an interpreted language, on my machine the solutions are found in just a bit less than 400mS.
+
+It takes exactly 1784 calls to solve() to find all the solutions.
