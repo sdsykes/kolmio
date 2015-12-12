@@ -42,4 +42,3 @@ how this algorithm works.
 As an optimisation, certain triangle piece / orientation combinations are discarded before placing them
 because we know through counting the number of matching pictures that only certain pictures can appear
 on the outside edge of the megakolmio.
-
