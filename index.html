@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="css/kolmio.css" type="text/css" media="screen">
+  <link href='https://fonts.googleapis.com/css?family=Abel' rel='stylesheet' type='text/css'>
+  <title>MEGAKOLMIO</title>
+</head>
+<body>
+  <div id="outer">
+    <h1>MEGAKOLMIO</h1>
+    <div id="right-matter">
+      <h2>Stephen Sykes December 2015</h2>
+      <p><span class="button"><a href="">RESET</a></span></p>
+    </div>
+    <div class="clear"></div>
+    <div id="content">
+      <div id="res1" class="result"></div>
+      <div id="res2" class="result"></div>
+      <div id="res3" class="result"></div>
+      <div id="res4" class="result"></div>
+      <div id="res5" class="result"></div>
+      <div id="res6" class="result"></div>
+      <div id="t1" class="home1"><img src="P1_0.png" class="kol"></div>
+      <div id="t2" class="home2"><img src="P2_0.png" class="kol"></div>
+      <div id="t3" class="home3"><img src="P3_0.png" class="kol"></div>
+      <div id="t4" class="home4"><img src="P4_0.png" class="kol"></div>
+      <div id="t5" class="home5"><img src="P5_0.png" class="kol"></div>
+      <div id="t6" class="home6"><img src="P6_0.png" class="kol"></div>
+      <div id="t7" class="home7"><img src="P7_0.png" class="kol"></div>
+      <div id="t8" class="home8"><img src="P8_0.png" class="kol"></div>
+      <div id="t9" class="home9"><img src="P9_0.png" class="kol"></div>
+    </div>
+  </div>
+</body>
+
+<script>
+var xhr = new XMLHttpRequest();
+xhr.open('GET', "/steps.json");
+xhr.responseType = 'json';
+xhr.onload = function() {
+  var steps = xhr.response;
+  animate_steps(steps);
+};
+xhr.onerror = function() {
+  console.log("Error");
+};
+xhr.send();
+
+var result_count = 0;
+
+function animate_steps(steps) {
+  var i;
+  var pieces = []
+  for (i = 1; i <= 9; ++i) {
+    pieces[i - 1] = document.getElementById("t" + i);
+  }
+  do_step(steps, pieces, 0)
+}
+
+function do_step(steps, pieces, n) {
+  if (n >= steps.length) return;
+  step = steps[n];
+  var i;
+  var unused = [1,2,3,4,5,6,7,8,9]
+  var pieces_used = 0
+  for (i = 0; i < 9; ++i) {
+    var rotate_prefix = "rot";
+    if (i == 2 || i == 5 || i == 7) rotate_prefix = "rot_u";
+    var position = "pos" + (i + 1);
+    var piece_setting = step[i];
+    if (piece_setting) {
+      pieces_used++;
+      var piece_index = piece_setting[0] - 1;
+      var piece = pieces[piece_index];
+      unused[piece_index] = null;
+      piece.className = "";
+      piece.classList.add(position)
+      var rotation = rotate_prefix + piece_setting[1];
+      piece.classList.add(rotation)
+    }
+  }
+  unused.forEach( function(piece_number) {
+    if (piece_number !== null) {
+      var piece_index = piece_number - 1;
+      var piece = pieces[piece_index];
+      piece.className = "";
+      piece.classList.add("home" + piece_number);
+    }
+  });
+  
+  var pause = 400;
+  if (pieces_used == 9) {
+    result_count++;
+    var result_div = document.getElementById("res" + result_count);
+    result_div.style.background = "white";
+    var elem = document.createElement("img");
+    elem.setAttribute("src", "result_" + result_count + ".png");
+    setTimeout(function(){result_div.appendChild(elem);}, 300);
+    pause = 2500;
+  }
+  
+  setTimeout(function(){do_step(steps, pieces, n + 1);}, pause);
+}
+
+imgLink.addEventListener('mouseover', Controls.mouseOverListener, false );
+imgLink.addEventListener('mouseout', Controls.mouseOutListener, false );
+
+</script>
+
+</html>

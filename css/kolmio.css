@@ -1,0 +1,199 @@
+body {
+  margin: 0;
+  background-color: black;
+}
+
+#outer {
+  width: 1070px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-family: 'Abel', sans-serif;
+  font-size: 36px;
+  text-transform: uppercase;
+  font-weight: 400;
+  font-style: normal;
+  letter-spacing: .015em;
+  color: white;
+  float: left;
+}
+
+#right-matter {
+  float: right;
+  margin-top: 10px;
+}
+
+h2 {
+  font-family: 'Abel', sans-serif;
+  font-size: 26px;
+  text-transform: uppercase;
+  font-weight: 400;
+  font-style: normal;
+  letter-spacing: .015em;
+  color: white;
+}
+
+#right-matter p {
+  font-family: 'Abel', sans-serif;
+  font-size: 14px;
+  text-align: right;
+  margin-top: -10px;
+}
+#right-matter p a {
+  color: white;
+  text-decoration: none;
+}
+.button {
+  padding: 4px 8px 4px 8px;
+  border-radius: 4px;  
+  background-color: #707070;
+}
+
+.clear {clear: both;}
+
+#content {
+  position: relative;
+  height: 753px;
+}
+
+#content .kol {
+  width: 200px;
+  height: 173px;
+}
+
+#content div {
+  position: absolute;
+  transition: 0.3s ease-in-out;
+  transform-origin: 50% 65%;
+}
+
+.result {
+  width: 100px;
+  height: 100px;
+  background-color: #707070;
+  border-radius: 10px;  
+}
+
+.result img {
+  margin-top: 15px;
+  margin-left: 10px;
+  width: 80px;
+  height: 69px;
+}
+
+#res1 {
+  top: 10px;
+  left: 10px;
+}
+#res2 {
+  top: 10px;
+  left: 150px;
+}
+#res3 {
+  top: 10px;
+  left: 290px;
+}
+#res4 {
+  top: 10px;
+  left: 690px;
+}
+#res5 {
+  top: 10px;
+  left: 830px;
+}
+#res6 {
+  top: 10px;
+  left: 970px;
+}
+
+.home1 {
+  top: 550px;
+  left: 10px;
+}
+.home2 {
+  top: 550px;
+  left: 225px;
+}
+.home3 {
+  top: 550px;
+  left: 440px;
+}
+.home4 {
+  top: 550px;
+  left: 655px;
+}
+.home5 {
+  top: 550px;
+  left: 870px;
+}
+.home6 {
+  top: 190px;
+  left: 10px;
+}
+.home7 {
+  top: 370px;
+  left: 10px;
+}
+.home8 {
+  top: 190px;
+  left: 870px;
+}
+.home9 {
+  top: 370px;
+  left: 870px;
+}
+.rot0 {
+  transform: rotate(0deg);
+}
+.rot1 {
+  transform: rotate(240deg);
+}
+.rot2 {
+  transform: rotate(120deg);
+}
+.rot_u0 {
+  transform: rotate(60deg);
+}
+.rot_u1 {
+  transform: rotate(300deg);
+}
+.rot_u2 {
+  transform: rotate(180deg);
+}
+.pos1 {
+  top: 10px;
+  left: 440px;
+}
+.pos2 {
+  top: 184px;
+  left: 340px;
+}
+.pos3 {
+  top: 126px;
+  left: 440px;
+}
+.pos4 {
+  top: 184px;
+  left: 540px;
+}
+.pos5 {
+  top: 358px;
+  left: 240px;
+}
+.pos6 {
+  top: 300px;
+  left: 340px;
+}
+.pos7 {
+  top: 358px;
+  left: 440px;
+}
+.pos8 {
+  top: 300px;
+  left: 540px;
+}
+.pos9 {
+  top: 358px;
+  left: 640px;
+}

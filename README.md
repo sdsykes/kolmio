@@ -1,0 +1,3 @@
+# MEGAKOLMIO solver
+
+## Stephen Sykes
