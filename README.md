@@ -46,3 +46,7 @@ However, even though Ruby is an interpreted language, it's pretty quick - tests 
 within 180mS - 400mS depending on processor speed.
 
 It takes exactly 1784 calls to solve() to find all the solutions.
+
+### Thanks
+
+Thanks to Wunderdog for [posting this puzzle](http://www.wunderdog.fi/wundernut-megakolmio).
