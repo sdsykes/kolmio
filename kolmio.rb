@@ -1,5 +1,12 @@
-# Triangle puzzle
+# MEGAKOLMIO Triangle puzzle
 # Stephen Sykes December 2015
+
+# Usage: ruby kolmio.rb [webgen]
+# Running without the webgen parameter just produces the
+# results in the format specified by the competition rules.
+# Adding the webgen parameter enables output of results images
+# and the steps file needed for the web page. Generating the
+# png files is very slow, so this takes much longer to run.
 
 RESULT_FILE_NAME = "result_#.png"
 STEP_FILE_NAME = "steps.json"
@@ -83,10 +90,11 @@ class Outputter
     @result_count = 0
   end
 
-  def output(result)
+  def output(result, options)
     @result_count += 1
     puts result.inspect
-    return
+    return unless options[:webgen]
+    
     img = ChunkyPNG::Image.new(904, 779, ChunkyPNG::Color::WHITE)
     result.each_with_index do |triangle, pos_index|
       upside_down = [2,5,7].include?(pos_index)
@@ -148,17 +156,19 @@ class Solver
     @steps = []
   end
 
-  def run
+  def run(options = {})
     outputter = Outputter.new
 
     0.upto(8) do |n|
       triangle = @triangles[n]
       result = tryrotate(triangle, 0) { solve([triangle,nil,nil,nil,nil,nil,nil,nil,nil], 0) }
-      outputter.output(result) if result
+      outputter.output(result, options) if result
     end
-
-    File.open(STEP_FILE_NAME, "w") {|f| f.write(@steps.to_json)}
-    puts "#{@solve_count} steps"
+    
+    if options[:webgen]
+      File.open(STEP_FILE_NAME, "w") {|f| f.write(@steps.to_json)}
+    end
+    # For info, solutions were found in @solve_count steps
   end
 
   def make_triangles
@@ -186,6 +196,8 @@ class Solver
     return false
   end
 
+  # This is an optimisation, due to the observation that only certain pictures can appear
+  # on the outer edge of the megakolmio.
   def canplace(triangle, pos)
     OUTER_EDGES[pos].each do |edge|
       return false unless triangle.sides[edge].is_legal_for_outer_edge
@@ -193,6 +205,8 @@ class Solver
     return true
   end
 
+  # This does the main work, recursively. The level parameter relates to the 
+  # CONDITIONS - when all conditions are met, then a solution is found.
   def solve(placings, level)
     @steps << placings.collect {|triangle| triangle ? [triangle.number, triangle.rotation] : nil}
     @solve_count += 1
@@ -202,6 +216,7 @@ class Solver
     condition = CONDITIONS[level]
     pos1, side1, pos2, side2 = condition
 
+    # If the two positions alread have pieces in them then check the condition
     if placings[pos1] && placings[pos2]
       if placings[pos1].sides[side1].matches(placings[pos2].sides[side2])
         solve(placings, level + 1)
@@ -209,6 +224,7 @@ class Solver
         false
       end
     else
+      # One position was unfilled - find a piece that fits
       unfilled_pos = [pos1, pos2].detect{|pos| !placings[pos]}
 
       unused = @triangles - placings
@@ -229,4 +245,8 @@ class Solver
 
 end
 
-Solver.new.run
+if ARGV[0] == "webgen"
+  Solver.new.run(webgen: true)
+else
+  Solver.new.run
+end
