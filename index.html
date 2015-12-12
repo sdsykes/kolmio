@@ -43,7 +43,7 @@ var pieces = [];
 
 function fetch_steps() {
   var xhr = new XMLHttpRequest();
-  xhr.open('GET', "/steps.json");
+  xhr.open('GET', "steps.json");
   xhr.responseType = 'json';
   xhr.onload = function() {
     steps = xhr.response;
