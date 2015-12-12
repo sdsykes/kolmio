@@ -15,9 +15,6 @@ just run the ruby file.
 
     bundle install
     ruby kolmio.rb
-    # you might need
-    # bundle exec kolmio.rb
-    # depending on your environment
 
 ### Usage
 
