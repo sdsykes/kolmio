@@ -8,7 +8,7 @@
 # and the steps file needed for the web page. Generating the
 # png files is very slow, so this takes much longer to run.
 
-RESULT_FILE_NAME = "result_#.png"
+RESULT_FILE_NAME = "images/result_#.png"
 STEP_FILE_NAME = "steps.json"
 
 require 'json'
@@ -82,7 +82,7 @@ class Outputter
     0.upto(8) do |n|
       @p_images[n] = []
       0.upto(2) do |m|
-        png_name = "P#{n + 1}_#{m}.png"
+        png_name = "images/P#{n + 1}_#{m}.png"
         @p_images[n][m] = ChunkyPNG::Image.from_datastream(ChunkyPNG::Datastream.from_file(png_name))
       end
     end
