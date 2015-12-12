@@ -49,4 +49,4 @@ It takes exactly 1784 calls to solve() to find all the solutions.
 
 ### Thanks
 
-Thanks to Wunderdog for [posting this puzzle](http://www.wunderdog.fi/wundernut-megakolmio).
+Thanks to Wunderdog for [posing this puzzle](http://www.wunderdog.fi/wundernut-megakolmio).
