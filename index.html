@@ -47,7 +47,7 @@ function fetch_steps() {
   xhr.responseType = 'json';
   xhr.onload = function() {
     steps = xhr.response;
-    animate_steps(steps);
+    setTimeout(function(){animate_steps();}, 2000);
   };
   xhr.onerror = function() {
     console.log("Error");
