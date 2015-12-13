@@ -38,6 +38,9 @@ As an optimisation, certain triangle piece / orientation combinations are discar
 because we know through counting the number of matching pictures that only certain pictures can appear
 on the outside edge of the megakolmio.
 
+A second optimisation uses the fact that only one raccoon may appear on the outside
+of the triangle to eliminate some further branches of enquiry.
+
 ### Speed
 
 This solution has not been heavily optimised for speed, clarity is more important.
@@ -45,7 +48,7 @@ This solution has not been heavily optimised for speed, clarity is more importan
 However, even though Ruby is an interpreted language, it's pretty quick - tests show it completes
 within 180mS - 400mS depending on processor speed.
 
-It takes exactly 1784 calls to solve() to find all the solutions.
+It takes exactly 1664 calls to solve() to find all the solutions.
 
 ### Thanks
 
