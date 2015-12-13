@@ -20,15 +20,15 @@
       <div id="res4" class="result"></div>
       <div id="res5" class="result"></div>
       <div id="res6" class="result"></div>
-      <div id="t1" class="home1"><img src="images/P1_0.png" class="kol"></div>
-      <div id="t2" class="home2"><img src="images/P2_0.png" class="kol"></div>
-      <div id="t3" class="home3"><img src="images/P3_0.png" class="kol"></div>
-      <div id="t4" class="home4"><img src="images/P4_0.png" class="kol"></div>
-      <div id="t5" class="home5"><img src="images/P5_0.png" class="kol"></div>
-      <div id="t6" class="home6"><img src="images/P6_0.png" class="kol"></div>
-      <div id="t7" class="home7"><img src="images/P7_0.png" class="kol"></div>
-      <div id="t8" class="home8"><img src="images/P8_0.png" class="kol"></div>
-      <div id="t9" class="home9"><img src="images/P9_0.png" class="kol"></div>
+      <div id="t1" class="home1"><img src="images/P1_0.png" class="kol" title="P1"></div>
+      <div id="t2" class="home2"><img src="images/P2_0.png" class="kol" title="P2"></div>
+      <div id="t3" class="home3"><img src="images/P3_0.png" class="kol" title="P3"></div>
+      <div id="t4" class="home4"><img src="images/P4_0.png" class="kol" title="P4"></div>
+      <div id="t5" class="home5"><img src="images/P5_0.png" class="kol" title="P5"></div>
+      <div id="t6" class="home6"><img src="images/P6_0.png" class="kol" title="P6"></div>
+      <div id="t7" class="home7"><img src="images/P7_0.png" class="kol" title="P7"></div>
+      <div id="t8" class="home8"><img src="images/P8_0.png" class="kol" title="P8"></div>
+      <div id="t9" class="home9"><img src="images/P9_0.png" class="kol" title="P9"></div>
     </div>
   </div>
 </body>
@@ -94,7 +94,6 @@ function result_hover_out() {
 }
 
 function animate_steps() {
-  var i;
   do_step(0)
 }
 
@@ -103,21 +102,23 @@ function do_step(n) {
   if (n >= steps.length) {finished = true; return;}
   step = steps[n];
   var i;
-  var unused = [1,2,3,4,5,6,7,8,9]
-  var pieces_used = 0
+  var unused = [1,2,3,4,5,6,7,8,9];
+  var pieces_used = 0;
+  var piece_names = [];
   
   // Loop through the megakolmio positions, placing the right piece in each one
   for (i = 0; i < 9; ++i) {
     var rotate_prefix = "rot";
     if (i == 2 || i == 5 || i == 7) rotate_prefix = "rot_u";
     var position = "pos" + (i + 1);
-    var piece_setting = step[i];
-    if (piece_setting) {
+    var pos_setting = step[i];
+    if (pos_setting) {
+      piece_names[i] = "P" + pos_setting[0];
       pieces_used++;
-      var piece_index = piece_setting[0] - 1;
+      var piece_index = pos_setting[0] - 1;
       var piece = pieces[piece_index];
       unused[piece_index] = null;
-      var rotation = rotate_prefix + piece_setting[1];
+      var rotation = rotate_prefix + pos_setting[1];
       var pos_rot = position + " " + rotation;
       if (piece.className != pos_rot) {
         piece.className = pos_rot;
@@ -146,6 +147,7 @@ function do_step(n) {
     result_div.style.background = "white";
     var elem = document.createElement("img");
     elem.setAttribute("src", "images/result_" + result_count + ".png");
+    elem.setAttribute("title", "[" + piece_names.join() + "]");
     elem.classList.add("thumb_img");
     setTimeout(function(){result_div.appendChild(elem);}, 300);
     pause = 2500;
