@@ -20,15 +20,15 @@
       <div id="res4" class="result"></div>
       <div id="res5" class="result"></div>
       <div id="res6" class="result"></div>
-      <div id="t1" class="home1"><img src="images/P1_0.png" class="kol"></div>
-      <div id="t2" class="home2"><img src="images/P2_0.png" class="kol"></div>
-      <div id="t3" class="home3"><img src="images/P3_0.png" class="kol"></div>
-      <div id="t4" class="home4"><img src="images/P4_0.png" class="kol"></div>
-      <div id="t5" class="home5"><img src="images/P5_0.png" class="kol"></div>
-      <div id="t6" class="home6"><img src="images/P6_0.png" class="kol"></div>
-      <div id="t7" class="home7"><img src="images/P7_0.png" class="kol"></div>
-      <div id="t8" class="home8"><img src="images/P8_0.png" class="kol"></div>
-      <div id="t9" class="home9"><img src="images/P9_0.png" class="kol"></div>
+      <div id="t1" class="home1"><img src="images/P1_0.png" class="kol" title="P1"></div>
+      <div id="t2" class="home2"><img src="images/P2_0.png" class="kol" title="P2"></div>
+      <div id="t3" class="home3"><img src="images/P3_0.png" class="kol" title="P3"></div>
+      <div id="t4" class="home4"><img src="images/P4_0.png" class="kol" title="P4"></div>
+      <div id="t5" class="home5"><img src="images/P5_0.png" class="kol" title="P5"></div>
+      <div id="t6" class="home6"><img src="images/P6_0.png" class="kol" title="P6"></div>
+      <div id="t7" class="home7"><img src="images/P7_0.png" class="kol" title="P7"></div>
+      <div id="t8" class="home8"><img src="images/P8_0.png" class="kol" title="P8"></div>
+      <div id="t9" class="home9"><img src="images/P9_0.png" class="kol" title="P9"></div>
     </div>
   </div>
 </body>
@@ -47,7 +47,7 @@ function fetch_steps() {
   xhr.responseType = 'json';
   xhr.onload = function() {
     steps = xhr.response;
-    animate_steps(steps);
+    setTimeout(function(){animate_steps();}, 2000);
   };
   xhr.onerror = function() {
     console.log("Error");
@@ -94,8 +94,7 @@ function result_hover_out() {
 }
 
 function animate_steps() {
-  var i;
-  do_step(0)
+  do_step(0);
 }
 
 function do_step(n) {
@@ -103,59 +102,70 @@ function do_step(n) {
   if (n >= steps.length) {finished = true; return;}
   step = steps[n];
   var i;
-  var unused = [1,2,3,4,5,6,7,8,9]
-  var pieces_used = 0
+  var unused = [1,2,3,4,5,6,7,8,9];
+  var pieces_used = 0;
+  var piece_names = [];
+  
+  // Loop through the megakolmio positions, placing the right piece in each one
   for (i = 0; i < 9; ++i) {
     var rotate_prefix = "rot";
     if (i == 2 || i == 5 || i == 7) rotate_prefix = "rot_u";
     var position = "pos" + (i + 1);
-    var piece_setting = step[i];
-    if (piece_setting) {
+    var pos_setting = step[i];
+    if (pos_setting) {
+      piece_names[i] = "P" + pos_setting[0];
       pieces_used++;
-      var piece_index = piece_setting[0] - 1;
+      var piece_index = pos_setting[0] - 1;
       var piece = pieces[piece_index];
       unused[piece_index] = null;
-      piece.className = "";
-      piece.classList.add(position)
-      var rotation = rotate_prefix + piece_setting[1];
-      piece.classList.add(rotation)
+      var rotation = rotate_prefix + pos_setting[1];
+      var pos_rot = position + " " + rotation;
+      if (piece.className != pos_rot) {
+        piece.className = pos_rot;
+      }
     }
   }
-  unused.forEach( function(piece_number) {
+  
+  // Place those pieces tha should be in their home positions
+  unused.forEach(function(piece_number) {
     if (piece_number !== null) {
       var piece_index = piece_number - 1;
       var piece = pieces[piece_index];
-      piece.className = "";
-      piece.classList.add("home" + piece_number);
+      var home = "home" + piece_number;
+      if (piece.className != home) {
+        piece.className = home;
+      }
     }
   });
   
   var pause = 400;
+  
+  // Check if this is a solution
   if (pieces_used == 9) {
     result_count++;
     var result_div = document.getElementById("res" + result_count);
     result_div.style.background = "white";
     var elem = document.createElement("img");
     elem.setAttribute("src", "images/result_" + result_count + ".png");
+    elem.setAttribute("title", "[" + piece_names.join() + "]");
     elem.classList.add("thumb_img");
     setTimeout(function(){result_div.appendChild(elem);}, 300);
     pause = 2500;
-    setTimeout(function(){send_pieces_home();}, 2100);
+    if (result_count < 6) setTimeout(function(){send_pieces_home();}, 2100);
   }
   
   setTimeout(function(){do_step(n + 1);}, pause);
 }
 
 function reset() {
-  if (finished) reset_and_restart()
+  if (finished) reset_and_restart();
   else was_reset = true;
 }
 
 function send_pieces_home() {
   for (i = 0; i < 9; ++i) {
     var piece = pieces[i];
-    piece.className = "";
-    piece.classList.add("home" + (i + 1));
+    piece.className = "home" + (i + 1);
   }
 }
 
@@ -170,6 +180,7 @@ function reset_and_restart() {
   }
 
   was_reset = false;
+  finished = false;
   setTimeout(function(){do_step(0);}, 2000);
 }
 

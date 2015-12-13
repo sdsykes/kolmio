@@ -2,8 +2,6 @@
 
 ## Stephen Sykes
 
-### MEGAKOLMIO solver
-
 This solver is written in Ruby.
 
 It has output in the competition specified format, and optionally generates png images
@@ -17,9 +15,6 @@ just run the ruby file.
 
     bundle install
     ruby kolmio.rb
-    # you might need
-    # bundle exec kolmio.rb
-    # depending on your environment
 
 ### Usage
 
@@ -45,6 +40,13 @@ on the outside edge of the megakolmio.
 
 ### Speed
 
-Even though Ruby is an interpreted language, on my machine the solutions are found in just a bit less than 400mS.
+This solution has not been heavily optimised for speed, clarity is more important.
+
+However, even though Ruby is an interpreted language, it's pretty quick - tests show it completes
+within 180mS - 400mS depending on processor speed.
 
 It takes exactly 1784 calls to solve() to find all the solutions.
+
+### Thanks
+
+Thanks to Wunderdog for [posing this puzzle](http://www.wunderdog.fi/wundernut-megakolmio).
