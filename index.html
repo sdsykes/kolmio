@@ -105,6 +105,8 @@ function do_step(n) {
   var i;
   var unused = [1,2,3,4,5,6,7,8,9]
   var pieces_used = 0
+  
+  // Loop through the megakolmio positions, placing the right piece in each one
   for (i = 0; i < 9; ++i) {
     var rotate_prefix = "rot";
     if (i == 2 || i == 5 || i == 7) rotate_prefix = "rot_u";
@@ -122,6 +124,8 @@ function do_step(n) {
       }
     }
   }
+  
+  // Place those pieces tha should be in their home positions
   unused.forEach(function(piece_number) {
     if (piece_number !== null) {
       var piece_index = piece_number - 1;
@@ -134,6 +138,8 @@ function do_step(n) {
   });
   
   var pause = 400;
+  
+  // Check if this is a solution
   if (pieces_used == 9) {
     result_count++;
     var result_div = document.getElementById("res" + result_count);
@@ -143,7 +149,7 @@ function do_step(n) {
     elem.classList.add("thumb_img");
     setTimeout(function(){result_div.appendChild(elem);}, 300);
     pause = 2500;
-    setTimeout(function(){send_pieces_home();}, 2100);
+    if (result_count < 6) setTimeout(function(){send_pieces_home();}, 2100);
   }
   
   setTimeout(function(){do_step(n + 1);}, pause);
