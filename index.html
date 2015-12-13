@@ -165,8 +165,7 @@ function reset() {
 function send_pieces_home() {
   for (i = 0; i < 9; ++i) {
     var piece = pieces[i];
-    piece.className = "";
-    piece.classList.add("home" + (i + 1));
+    piece.className = "home" + (i + 1);
   }
 }
 
