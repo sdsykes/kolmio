@@ -115,18 +115,21 @@ function do_step(n) {
       var piece_index = piece_setting[0] - 1;
       var piece = pieces[piece_index];
       unused[piece_index] = null;
-      piece.className = "";
-      piece.classList.add(position)
       var rotation = rotate_prefix + piece_setting[1];
-      piece.classList.add(rotation)
+      var pos_rot = position + " " + rotation;
+      if (piece.className != pos_rot) {
+        piece.className = pos_rot;
+      }
     }
   }
-  unused.forEach( function(piece_number) {
+  unused.forEach(function(piece_number) {
     if (piece_number !== null) {
       var piece_index = piece_number - 1;
       var piece = pieces[piece_index];
-      piece.className = "";
-      piece.classList.add("home" + piece_number);
+      var home = "home" + piece_number;
+      if (piece.className != home) {
+        piece.className = home;
+      }
     }
   });
   
