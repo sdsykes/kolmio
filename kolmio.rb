@@ -27,10 +27,14 @@ class Side
     other.name == @name && other.is_top != @is_top
   end
   
-  def is_legal_for_outer_edge
+  def is_legal_for_outer_edge(raccoon_allowed)
     !@is_top && @name == "fox" ||
       @is_top && @name == "bambi" ||
-      !@is_top && @name == "raccoon"
+      (raccoon_allowed && is_raccoon_bottom)
+  end
+
+  def is_raccoon_bottom
+    !@is_top && @name == "raccoon"
   end
 
   def inspect
@@ -161,7 +165,7 @@ class Solver
 
     0.upto(8) do |n|
       triangle = @triangles[n]
-      result = tryrotate(triangle, 0) { solve([triangle,nil,nil,nil,nil,nil,nil,nil,nil], 0) }
+      result = tryrotate(triangle, 0, true) { solve([triangle,nil,nil,nil,nil,nil,nil,nil,nil], 0, false) }
       outputter.output(result, options) if result
     end
     
@@ -186,28 +190,40 @@ class Solver
   end
 
 
-  def tryrotate(triangle, pos)
+  def tryrotate(triangle, pos, raccoon_allowed)
     3.times do
       triangle.rotate
-      next unless canplace(triangle, pos)
+      next unless canplace(triangle, pos, raccoon_allowed)
       result = yield()
       return result if result
     end
     return false
   end
 
+  # Returns true if the triangle at this position uses the raccoon edge
+  def uses_raccoon_edge(triangle, pos)
+    OUTER_EDGES[pos].each do |edge|
+      return true if triangle.sides[edge].is_raccoon_bottom
+    end
+    return false
+  end
+
   # This is an optimisation, due to the observation that only certain pictures can appear
   # on the outer edge of the megakolmio.
-  def canplace(triangle, pos)
+  def canplace(triangle, pos, raccoon_allowed)
     OUTER_EDGES[pos].each do |edge|
-      return false unless triangle.sides[edge].is_legal_for_outer_edge
+      return false unless triangle.sides[edge].is_legal_for_outer_edge(raccoon_allowed)
     end
     return true
   end
 
-  # This does the main work, recursively. The level parameter relates to the 
-  # CONDITIONS - when all conditions are met, then a solution is found.
-  def solve(placings, level)
+  # This does the main work, recursively.
+  # The level parameter relates to the CONDITIONS - when all conditions are met, 
+  # then a solution is found.
+  #
+  # The raccoon_edge_used is an optimisation that elimiates certain branches early
+  # because we know that only one raccoon is used on the outside of the triangle.
+  def solve(placings, level, raccoon_edge_used)
     @steps << placings.collect {|triangle| triangle ? [triangle.number, triangle.rotation] : nil}
     @solve_count += 1
 
@@ -219,7 +235,7 @@ class Solver
     # If the two positions alread have pieces in them then check the condition
     if placings[pos1] && placings[pos2]
       if placings[pos1].sides[side1].matches(placings[pos2].sides[side2])
-        solve(placings, level + 1)
+        solve(placings, level + 1, raccoon_edge_used)
       else
         false
       end
@@ -231,9 +247,9 @@ class Solver
       unused.each do |triangle|
         placings[unfilled_pos] = triangle
 
-        tryrotate(triangle, unfilled_pos) do
+        tryrotate(triangle, unfilled_pos, !raccoon_edge_used) do
           if placings[pos1].sides[side1].matches(placings[pos2].sides[side2])
-            solution = solve(placings, level + 1)
+            solution = solve(placings, level + 1, raccoon_edge_used || uses_raccoon_edge(triangle, unfilled_pos))
             return solution if solution
           end
         end
