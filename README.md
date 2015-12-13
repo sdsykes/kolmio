@@ -45,7 +45,7 @@ This solution has not been heavily optimised for speed, clarity is more importan
 However, even though Ruby is an interpreted language, it's pretty quick - tests show it completes
 within 180mS - 400mS depending on processor speed.
 
-It takes exactly 1784 calls to solve() to find all the solutions.
+It takes exactly 1424 calls to solve() to find all the solutions.
 
 ### Thanks
 

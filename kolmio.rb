@@ -15,28 +15,20 @@ require 'json'
 require 'oily_png'
 
 class Side
+  attr_reader :sym
   attr_reader :is_top
   attr_reader :name
 
-  def initialize(name, is_top)
-    @name = name
-    @is_top = is_top
+  def initialize(sym)
+    @sym = sym
+    @is_top = sym.to_s =~ /_t/ ? true : false
+    @name = sym.to_s[/[^_]*/]
   end
 
   def matches(other)
     other.name == @name && other.is_top != @is_top
   end
   
-  def is_legal_for_outer_edge(raccoon_allowed)
-    !@is_top && @name == "fox" ||
-      @is_top && @name == "bambi" ||
-      (raccoon_allowed && is_raccoon_bottom)
-  end
-
-  def is_raccoon_bottom
-    !@is_top && @name == "raccoon"
-  end
-
   def inspect
     "#{name} #{@is_top ? "top" : "bottom"}"
   end
@@ -115,7 +107,6 @@ class Outputter
 end
 
 class Solver
-  # Note that the outer edge must be composed of 4 x fox_b, 4 x bambi_t and 1 x raccoon_b
   TRIANGLE_DEFS = [
     [:fox_t, :fox_b, :bambi_t],
     [:bambi_t, :fox_b, :raccoon_b],
@@ -152,6 +143,11 @@ class Solver
     [],
     [1,2]
   ]
+  
+  # Note that the outer edge must be composed of 4 x fox_b, 4 x bambi_t and 1 x raccoon_b
+  OUTER_EDGE_COMPOSITION = [
+    :fox_b, :fox_b, :fox_b, :fox_b, :bambi_t, :bambi_t, :bambi_t, :bambi_t, :raccoon_b
+  ]
 
   def initialize
     make_triangles
@@ -165,7 +161,10 @@ class Solver
 
     0.upto(8) do |n|
       triangle = @triangles[n]
-      result = tryrotate(triangle, 0, true) { solve([triangle,nil,nil,nil,nil,nil,nil,nil,nil], 0, false) }
+      unused_outer_edges = OUTER_EDGE_COMPOSITION.dup
+      result = tryrotate(triangle, 0, unused_outer_edges) do |_unused_outer_edges|
+        solve([triangle,nil,nil,nil,nil,nil,nil,nil,nil], 0, _unused_outer_edges)
+      end
       outputter.output(result, options) if result
     end
     
@@ -179,9 +178,7 @@ class Solver
     n = 0
     @triangles = TRIANGLE_DEFS.collect do |sides|
       figures = sides.collect do |side|
-        is_top = side.to_s =~ /_t/ ? true : false
-        name = side.to_s[/[^_]*/]
-        Side.new(name, is_top)
+        Side.new(side)
       end
 
       n += 1
@@ -189,41 +186,36 @@ class Solver
     end  
   end
 
-
-  def tryrotate(triangle, pos, raccoon_allowed)
+  def tryrotate(triangle, pos, unused_outer_edges)
     3.times do
       triangle.rotate
-      next unless canplace(triangle, pos, raccoon_allowed)
-      result = yield()
+      unused_or_false = canplace(triangle, pos, unused_outer_edges)
+      next unless unused_or_false
+      result = yield(unused_or_false)
       return result if result
-    end
-    return false
-  end
-
-  # Returns true if the triangle at this position uses the raccoon edge
-  def uses_raccoon_edge(triangle, pos)
-    OUTER_EDGES[pos].each do |edge|
-      return true if triangle.sides[edge].is_raccoon_bottom
     end
     return false
   end
 
   # This is an optimisation, due to the observation that only certain pictures can appear
   # on the outer edge of the megakolmio.
-  def canplace(triangle, pos, raccoon_allowed)
-    OUTER_EDGES[pos].each do |edge|
-      return false unless triangle.sides[edge].is_legal_for_outer_edge(raccoon_allowed)
+  def canplace(triangle, pos, unused_outer_edges)
+    edge_syms = OUTER_EDGES[pos].collect {|edge_index| triangle.sides[edge_index].sym}
+    unused = unused_outer_edges.dup
+    edge_syms.each do |edge_sym|
+      return false unless unused.include?(edge_sym)
+      unused.delete_at(unused.index(edge_sym))
     end
-    return true
+    return unused
   end
 
   # This does the main work, recursively.
   # The level parameter relates to the CONDITIONS - when all conditions are met, 
   # then a solution is found.
   #
-  # The raccoon_edge_used is an optimisation that elimiates certain branches early
-  # because we know that only one raccoon is used on the outside of the triangle.
-  def solve(placings, level, raccoon_edge_used)
+  # The unused_outer_edges parameter enables an optimisation that elimiates certain branches early
+  # because we know exactly what pictures are used on the outside of the triangle.
+  def solve(placings, level, unused_outer_edges)
     @steps << placings.collect {|triangle| triangle ? [triangle.number, triangle.rotation] : nil}
     @solve_count += 1
 
@@ -235,7 +227,7 @@ class Solver
     # If the two positions alread have pieces in them then check the condition
     if placings[pos1] && placings[pos2]
       if placings[pos1].sides[side1].matches(placings[pos2].sides[side2])
-        solve(placings, level + 1, raccoon_edge_used)
+        solve(placings, level + 1, unused_outer_edges)
       else
         false
       end
@@ -247,9 +239,9 @@ class Solver
       unused.each do |triangle|
         placings[unfilled_pos] = triangle
 
-        tryrotate(triangle, unfilled_pos, !raccoon_edge_used) do
+        tryrotate(triangle, unfilled_pos, unused_outer_edges) do |_unused_outer_edges|
           if placings[pos1].sides[side1].matches(placings[pos2].sides[side2])
-            solution = solve(placings, level + 1, raccoon_edge_used || uses_raccoon_edge(triangle, unfilled_pos))
+            solution = solve(placings, level + 1, _unused_outer_edges)
             return solution if solution
           end
         end
