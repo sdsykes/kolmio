@@ -172,7 +172,6 @@ class Solver
       File.open(STEP_FILE_NAME, "w") {|f| f.write(@steps.to_json)}
     end
     # For info, solutions were found in @solve_count steps
-    p @solve_count
   end
 
   def make_triangles
