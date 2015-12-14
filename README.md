@@ -26,7 +26,7 @@ Adding the webgen parameter enables output of results images
 and the steps file needed for the web page. Generating the
 png files is very slow, so this takes much longer to run.
 
-### Description
+### Solver description
 
 The solution is found using a recursive algorithm that evaluates a set of rules one by one,
 placing triangles to satisfy the rules at each step.
@@ -65,6 +65,14 @@ There are 2 distinct solutions, and, of course, 3 different rotations of each on
     [P5, P4, P9, P3, P2, P8, P6, P7, P1]
     [P8, P5, P6, P7, P3, P4, P1, P2, P9]
     [P9, P7, P2, P1, P8, P6, P5, P4, P3]
+
+### Webgen
+
+With the webgen option, the solver generates png images of the finished solutions using a png library.
+This works by compositing the pre-rotated images from the images directory.
+
+The steps.json file is simply a record of each position tried, with the position
+and rotation of each piece.
 
 ### Thanks
 
