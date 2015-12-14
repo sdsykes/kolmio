@@ -122,6 +122,9 @@ function do_step(n) {
       var pos_rot = position + " " + rotation;
       if (piece.className != pos_rot) {
         piece.className = pos_rot;
+        piece.style.zIndex = 10; // moving pieces should go on top
+      } else {
+        piece.style.zIndex = 0;
       }
     }
   }
@@ -134,6 +137,9 @@ function do_step(n) {
       var home = "home" + piece_number;
       if (piece.className != home) {
         piece.className = home;
+        piece.style.zIndex = 10;
+      } else {
+        piece.style.zIndex = 0;
       }
     }
   });

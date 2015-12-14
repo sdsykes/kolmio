@@ -162,7 +162,7 @@ class Solver
     0.upto(8) do |n|
       triangle = @triangles[n]
       unused_outer_edges = OUTER_EDGE_COMPOSITION.dup
-      result = tryrotate(triangle, 0, unused_outer_edges) do |_unused_outer_edges|
+      result = tryrotate(triangle, 0, unused_outer_edges, []) do |_unused_outer_edges|
         solve([triangle,nil,nil,nil,nil,nil,nil,nil,nil], 0, _unused_outer_edges)
       end
       outputter.output(result, options) if result
@@ -186,11 +186,12 @@ class Solver
     end  
   end
 
-  def tryrotate(triangle, pos, unused_outer_edges)
+  def tryrotate(triangle, pos, unused_outer_edges, placings)
     3.times do
       triangle.rotate
       unused_or_false = canplace(triangle, pos, unused_outer_edges)
       next unless unused_or_false
+      next unless have_enough_outer_edges(triangle, unused_or_false, placings)
       result = yield(unused_or_false)
       return result if result
     end
@@ -198,7 +199,9 @@ class Solver
   end
 
   # This is an optimisation, due to the observation that only certain pictures can appear
-  # on the outer edge of the megakolmio.
+  # on the outer edge of the megakolmio. It returns false if the triangle cannot be placed
+  # in this position according to that rule. Otherwise it returns the remaining unused
+  # outer edges.
   def canplace(triangle, pos, unused_outer_edges)
     edge_syms = OUTER_EDGES[pos].collect {|edge_index| triangle.sides[edge_index].sym}
     unused = unused_outer_edges.dup
@@ -207,6 +210,21 @@ class Solver
       unused.delete_at(unused.index(edge_sym))
     end
     return unused
+  end
+
+  # This condition returns true if after accounting for the used triangle pieces, and
+  # the one passed in the triangle argument, there are enough suitable outer edges remaining for
+  # the puzzle to be completed.
+  def have_enough_outer_edges(triangle, unused_outer_edges, placings)
+    unused_triangles = @triangles - placings - [triangle]
+    sides_remaining = unused_triangles.inject([]) {|arr, triangle| arr += triangle.sides.collect{|side| side.sym}}
+
+    unused_outer_edges.each do |unused_side|
+      index = sides_remaining.index(unused_side)
+      return false unless index
+      sides_remaining.delete_at(index)
+    end
+    return true
   end
 
   # This does the main work, recursively.
@@ -239,7 +257,7 @@ class Solver
       unused.each do |triangle|
         placings[unfilled_pos] = triangle
 
-        tryrotate(triangle, unfilled_pos, unused_outer_edges) do |_unused_outer_edges|
+        tryrotate(triangle, unfilled_pos, unused_outer_edges, placings) do |_unused_outer_edges|
           if placings[pos1].sides[side1].matches(placings[pos2].sides[side2])
             solution = solve(placings, level + 1, _unused_outer_edges)
             return solution if solution
