@@ -221,9 +221,9 @@ class Solver
     sides_remaining = unused_triangles.inject([]) {|arr, triangle| arr += triangle.sides.collect{|side| side.sym}}
 
     unused_outer_edges.each do |unused_side|
-      index = sides.index(unused_side)
+      index = sides_remaining.index(unused_side)
       return false unless index
-      sides.delete_at(index)
+      sides_remaining.delete_at(index)
     end
     return true
   end
