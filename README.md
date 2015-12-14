@@ -38,14 +38,33 @@ As an optimisation, certain triangle piece / orientation combinations are discar
 because we know through counting the number of matching pictures that only certain pictures can appear
 on the outside edge of the megakolmio.
 
+These optimisations are a huge win, reducing the number of placings tried by about 73%.
+
+Secondly, as we know exactly what pictures must go on the outer edges, we can eliminate further
+branches by not proceeding if there aren't enough sides left to fill the those edges. This is
+a further reduction of 40%.
+
+In total, the steps needed to solve the puzzle are reduced by 83.5% as opposed to a simple algorithm.
+
 ### Speed
 
 This solution has not been heavily optimised for speed, clarity is more important.
 
 However, even though Ruby is an interpreted language, it's pretty quick - tests show it completes
-within 180mS - 400mS depending on processor speed.
+within 180mS - 500mS depending on processor speed.
 
-It takes exactly 1424 calls to solve() to find all the solutions.
+It takes exactly 853 placings to find all the solutions.
+
+### Solution
+
+There are 2 distinct solutions, and, of course, 3 different rotations of each one.
+
+    [P1, P3, P7, P6, P5, P9, P4, P8, P2]
+    [P2, P6, P8, P4, P1, P7, P3, P9, P5]
+    [P3, P1, P4, P5, P9, P2, P7, P6, P8]
+    [P5, P4, P9, P3, P2, P8, P6, P7, P1]
+    [P8, P5, P6, P7, P3, P4, P1, P2, P9]
+    [P9, P7, P2, P1, P8, P6, P5, P4, P3]
 
 ### Thanks
 
