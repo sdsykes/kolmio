@@ -53,7 +53,7 @@ This solution has not been heavily optimised for speed, clarity is more importan
 However, even though Ruby is an interpreted language, it's pretty quick - tests show it completes
 within 180mS - 500mS depending on processor speed.
 
-It takes exactly 853 placings to find all the solutions.
+It takes exactly 720 placings to find all the solutions.
 
 ### Solution
 
