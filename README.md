@@ -2,7 +2,9 @@
 
 ## Stephen Sykes
 
-This solver is written in Ruby.
+This solver is written in Ruby. Oh, and there's one in Go too.
+
+But first, the Ruby solution.
 
 It has output in the competition specified format, and optionally generates png images
 of the solutions, and records the steps taken to get to each solution in a json file.
@@ -26,7 +28,7 @@ Adding the webgen parameter enables output of results images
 and the steps file needed for the web page. Generating the
 png files is very slow, so this takes much longer to run.
 
-### Description
+### Solver description
 
 The solution is found using a recursive algorithm that evaluates a set of rules one by one,
 placing triangles to satisfy the rules at each step.
@@ -53,7 +55,7 @@ This solution has not been heavily optimised for speed, clarity is more importan
 However, even though Ruby is an interpreted language, it's pretty quick - tests show it completes
 within 180mS - 500mS depending on processor speed.
 
-It takes exactly 853 placings to find all the solutions.
+It takes exactly 720 placings to find all the solutions.
 
 ### Solution
 
@@ -65,6 +67,38 @@ There are 2 distinct solutions, and, of course, 3 different rotations of each on
     [P5, P4, P9, P3, P2, P8, P6, P7, P1]
     [P8, P5, P6, P7, P3, P4, P1, P2, P9]
     [P9, P7, P2, P1, P8, P6, P5, P4, P3]
+
+### Webgen
+
+With the webgen option, the solver generates png images of the finished solutions using a png library.
+This works by compositing the pre-rotated images from the images directory.
+
+The steps.json file is simply a record of each position tried, with the position
+and rotation of each piece.
+
+### Go
+
+Because there is an obvious way the solution search can be parallelised, I wrote a solution in Go
+to try this out.
+
+It runs essentially the same algorithm, but with a little more emphasis on speed.
+
+Goroutines are fired off to work on solutions starting with each of the 9 pieces in the top
+position. The first solution to be found is printed out, and the program exits.
+
+    $ go build
+    $ ./kolmio
+    [P9, P7, P2, P1, P8, P6, P5, P4, P3]
+
+This typically runs in less than 2mS on my machine.
+
+By removing the break statement at line 223 you could see all the solutions, which will be slightly slower.
+But still a couple of orders of magnitude faster than Ruby.
+
+### Further ideas
+
+Because there are only 2 distinct solutions, eliminating the search for rotations of them could be
+done early on. However, it is rather fun to watch the animation of the search for all 6 solutions.
 
 ### Thanks
 
