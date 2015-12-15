@@ -10,7 +10,7 @@ It has output in the competition specified format, and optionally generates png 
 of the solutions, and records the steps taken to get to each solution in a json file.
 
 There is a web front-end that can read these files, and display an animation of how the
-puzzle was solved. [You can find the web page here.](http://sdsykes.github.io/kolmio/index.html)
+puzzle was solved. [You can find the web page here.](http://sdsykes.github.io/kolmio/)
 
 In order to run the solver and verify it works, use bundler to setup the required gems, then
 just run the ruby file.
