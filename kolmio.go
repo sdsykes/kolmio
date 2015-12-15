@@ -3,8 +3,6 @@ package main
 import (
 	"fmt"
 	"strings"
-	"sync/atomic"
-	"time"
 )
 
 // A Side of a piece
@@ -136,11 +134,7 @@ func canPlace(piece Triangle, pos int, unusedOuterSides [9]Side) ([9]Side, bool)
 	return unusedOuterSides, true
 }
 
-var ops uint64
-
-func solve(placings [9]Triangle, level int, unusedOuterSides [9]Side) Solution {
-	atomic.AddUint64(&ops, 1)
-
+func solve(placings [9]Triangle, level int) Solution {
 	if level == len(conditions) {
 		return Solution{placings, true}
 	}
@@ -150,7 +144,7 @@ func solve(placings [9]Triangle, level int, unusedOuterSides [9]Side) Solution {
 
 	if placings[pos1].present && placings[pos2].present {
 		if sideMatches(placings[pos1].sides[side1], placings[pos2].sides[side2]) {
-			return solve(placings, level+1, unusedOuterSides)
+			return solve(placings, level+1)
 		}
 		return Solution{placings, false}
 	}
@@ -168,13 +162,9 @@ func solve(placings [9]Triangle, level int, unusedOuterSides [9]Side) Solution {
 		rotatedPiece := unusedPiece
 		for i := 0; i < 3; i++ {
 			rotatedPiece = rotate(rotatedPiece)
-			remainingUnused, allowed := canPlace(rotatedPiece, unfilledPos, unusedOuterSides)
-			if !allowed {
-				continue
-			}
 			placings[unfilledPos] = rotatedPiece
 			if sideMatches(placings[pos1].sides[side1], placings[pos2].sides[side2]) {
-				solution := solve(placings, level+1, remainingUnused)
+				solution := solve(placings, level+1)
 				if solution.success {
 					return Solution{solution.placings, true}
 				}
@@ -204,12 +194,12 @@ func solveWithFirstTriangle(triangle Triangle, solutionChan chan Solution) {
 	var result Solution
 	for i := 0; i < 3; i++ {
 		triangle = rotate(triangle)
-		remainingUnused, allowed := canPlace(triangle, 0, outerSides)
+		_, allowed := canPlace(triangle, 0, outerSides)
 		if !allowed {
 			continue
 		}
 		placings[0] = triangle
-		result = solve(placings, 0, remainingUnused)
+		result = solve(placings, 0)
 		if result.success {
 			break
 		}
@@ -218,12 +208,11 @@ func solveWithFirstTriangle(triangle Triangle, solutionChan chan Solution) {
 }
 
 func main() {
-	t := time.Now()
-
 	makeTriangles()
 	makeOuterSides()
 	solutionChan := make(chan Solution)
 
+	// Spin up 9 goroutines, one for each starting piece
 	for i := 0; i < 9; i++ {
 		go solveWithFirstTriangle(triangles[i], solutionChan)
 	}
@@ -231,8 +220,7 @@ func main() {
 		result := <-solutionChan
 		if result.success {
 			printSolution(result.placings)
+			break // remove this if you want all the solutions
 		}
 	}
-	fmt.Println(ops)
-	fmt.Println(time.Since(t))
 }
